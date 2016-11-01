@@ -1,0 +1,70 @@
+mongo:
+  image: 'mongo:latest'
+  ports:
+    - '27017:27017'
+  labels:
+    SERVICE_80_NAME: mongo
+    SERVICE_80_CHECK_HTTP: /
+    SERVICE_80_CHECK_INTERVAL: 5s
+    SERVICE_443_IGNORE: 'yes'
+    SERVICE_TAGS: production
+auth:
+  restart: always
+  build: ./auth
+  volumes:
+    - /usr/src/app/static/
+  links:
+    - mongo
+  ports:
+    - "80"
+  command: /usr/local/bin/gunicorn -w 1 -b :80 app:app
+  labels:
+    SERVICE_80_NAME: auth
+    SERVICE_80_CHECK_HTTP: /health
+    SERVICE_80_CHECK_INTERVAL: 5s
+    SERVICE_443_IGNORE: 'yes'
+    SERVICE_TAGS: production
+data:
+  restart: always
+  build: ./data
+  volumes:
+    - /usr/src/app/static/
+  links:
+    - mongo
+  ports:
+    - "80"
+  command: /usr/local/bin/gunicorn -w 1 -b :80 app:app
+  labels:
+    SERVICE_80_NAME: data
+    SERVICE_80_CHECK_HTTP: /health
+    SERVICE_80_CHECK_INTERVAL: 5s
+    SERVICE_443_IGNORE: 'yes'
+    SERVICE_TAGS: production
+nginx:
+  build: ./nginx
+  container_name: nginx
+  links:
+  - consul
+  - auth:auth
+  ports:
+  - "80:80"
+  labels:
+    SERVICE_IGNORE: 'yes'
+
+consul:
+  command: -server -bootstrap -advertise ${HOST_IP}
+  image: progrium/consul
+  container_name: consul
+  labels:
+    SERVICE_IGNORE: 'yes'
+  ports:
+  - "8500:8500"
+
+registrator:
+  command: "-internal consul://consul:8500"
+  image: gliderlabs/registrator:latest
+  container_name: registrator
+  links:
+  - consul
+  volumes:
+  - "/var/run/docker.sock:/tmp/docker.sock"
