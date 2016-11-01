@@ -16,9 +16,9 @@ The following software needs to be installed on your laptop:
 * [Docker Toolbox](https://www.docker.com/docker-toolbox) OR [Docker for Mac](https://www.docker.com/products/docker#/mac)
 * [docker-compose](https://docs.docker.com/compose/install). I used [brew](http://brew.sh) to install it: `brew install docker-compose`
 
-# Re-configure docker compose to add more containers for health check.
+## Configuration
 
-* Add lables tag to the container definition as mentioned below.
+* In every container definition, add lables tag as mentioned below.
    + SERVICE_80_NAME: [SERVICE NAME]  # Example: AUTH
    + SERVICE_80_CHECK_HTTP: [PATH TO QUERY] #Example: /health
    + SERVICE_80_CHECK_INTERVAL: [Time Interval] #Example: 5s
