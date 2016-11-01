@@ -6,7 +6,7 @@ This demo shows NGINX being used in conjuction with Consul, a popular Service di
 
 * [Consul](http://www.consul.io) for service discovery
 * [Registrator](https://github.com/gliderlabs/registrator) to register services with Consul. Registrator monitors for containers being started and stopped and updates Consul when a container changes state.
-* [nginxdemos/hello](https://hub.docker.com/r/nginxdemos/hello/) as a NGINX webserver that serves a simple page containing its hostname, IP address and port, request URI, local time of the webserver and the client IP address. This is to simulate backend servers NGINX will be load balancing across.
+* Docker containers.
 * and ofcourse open source [NGINX](http://nginx.org/)
 
 ## Prerequisites and Required Software
@@ -16,6 +16,15 @@ The following software needs to be installed on your laptop:
 * [Docker Toolbox](https://www.docker.com/docker-toolbox) OR [Docker for Mac](https://www.docker.com/products/docker#/mac)
 * [docker-compose](https://docs.docker.com/compose/install). I used [brew](http://brew.sh) to install it: `brew install docker-compose`
 
+# Re-configure docker compose to add more containers for health check.
+
+* Add lables tag to the container definition as mentioned below.
+  labels:
+    SERVICE_80_NAME: [SERVICE NAME]  # Example: AUTH
+    SERVICE_80_CHECK_HTTP: [PATH TO QUERY] #Example: /health
+    SERVICE_80_CHECK_INTERVAL: [Time Interval] #Example: 5s
+    SERVICE_443_IGNORE: ['yes'  or  'no']
+    SERVICE_TAGS: [SERVICE TAG] Example: production / development /pre-production
 ## Setting up the demo
 
 * NGINX will be listening on port 80 on your docker host.
@@ -81,4 +90,4 @@ consultemplatedemo_http_2
 On the Consul UI page (http://<DOCKER-HOST-IP>:8500/ui/#/dc1/services/http), you will observe the change and the container removed. Also the NGINX config file (/etc/nginx/conf.d/app.conf) will have just 2 server entries now indicating that the 3rd server entry corresponding to the container which was stopped was removed automatically.
 
 
-# Docker-Consul
+
