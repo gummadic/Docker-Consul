@@ -19,7 +19,6 @@ The following software needs to be installed on your laptop:
 # Re-configure docker compose to add more containers for health check.
 
 * Add lables tag to the container definition as mentioned below.
-  + labels:
    + SERVICE_80_NAME: [SERVICE NAME]  # Example: AUTH
    + SERVICE_80_CHECK_HTTP: [PATH TO QUERY] #Example: /health
    + SERVICE_80_CHECK_INTERVAL: [Time Interval] #Example: 5s
